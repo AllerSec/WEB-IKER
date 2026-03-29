@@ -887,26 +887,26 @@
           <div class="f-row">
             <div class="f-group">
               <label>Nombre</label>
-              <input type="text" placeholder="Nombre y apellidos" required />
+              <input name="nombre" type="text" placeholder="Nombre y apellidos" required />
             </div>
             <div class="f-group">
               <label>Clínica</label>
-              <input type="text" placeholder="Nombre de la clínica" required />
+              <input name="clinica" type="text" placeholder="Nombre de la clínica" required />
             </div>
           </div>
           <div class="f-row">
             <div class="f-group">
               <label>Email</label>
-              <input type="email" placeholder="contacto@clinica.com" required />
+              <input name="email" type="email" placeholder="contacto@clinica.com" required />
             </div>
             <div class="f-group">
               <label>Teléfono</label>
-              <input type="tel" placeholder="+34 600 000 000" />
+              <input name="telefono" type="tel" placeholder="+34 600 000 000" />
             </div>
           </div>
           <div class="f-group">
             <label>Presupuesto mensual en publicidad</label>
-            <select>
+            <select name="presupuesto">
               <option value="">Seleccione un rango</option>
               <option>Menos de 1.000 &euro;/mes</option>
               <option>1.000 &euro; &ndash; 3.000 &euro;/mes</option>
@@ -955,13 +955,39 @@
       io.observe(el);
     });
 
-    // Form
-    function sendForm(e) {
+    // ── Pegue aquí la URL de su Google Apps Script desplegado ──
+    const SHEET_URL = 'PEGUE_AQUI_SU_URL';
+
+    async function sendForm(e) {
       e.preventDefault();
-      const btn = e.target.querySelector('.f-submit');
-      btn.textContent = 'Solicitud enviada — nos ponemos en contacto en menos de 24h';
-      btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+      const form = e.target;
+      const btn  = form.querySelector('.f-submit');
+
+      btn.textContent = 'Enviando...';
       btn.disabled = true;
+
+      const payload = {
+        nombre:      form.nombre.value.trim(),
+        clinica:     form.clinica.value.trim(),
+        email:       form.email.value.trim(),
+        telefono:    form.telefono.value.trim(),
+        presupuesto: form.presupuesto.value,
+      };
+
+      try {
+        await fetch(SHEET_URL, {
+          method: 'POST',
+          mode:   'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(payload),
+        });
+        btn.textContent = 'Solicitud enviada — nos ponemos en contacto en menos de 24h';
+        btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+        form.reset();
+      } catch (err) {
+        btn.textContent = 'Error al enviar. Int\u00e9ntelo de nuevo.';
+        btn.disabled = false;
+      }
     }
   </script>
 </body>
