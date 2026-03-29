@@ -77,7 +77,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" /></noscript>
   <style>
     :root {
       --bg:    #07070f;
@@ -271,8 +272,8 @@
         <span>Virtuosolve</span>
       </div>
 
-      <h1>Hablemos.</h1>
-      <p>Estamos disponibles para resolver cualquier consulta sobre nuestro sistema de IA para clínicas estéticas.</p>
+      <h1>Contacta con Virtuosolve</h1>
+      <h2 style="font-size:.95rem;font-weight:500;color:var(--muted);margin-top:.3rem;margin-bottom:1.5rem;line-height:1.5;">Resolvemos cualquier consulta sobre nuestra IA para clínicas estéticas. Escríbenos por email, teléfono o WhatsApp.</h2>
 
       <div class="contact-list">
         <a href="mailto:virtuosolve@gmail.com" class="contact-item">
@@ -325,7 +326,14 @@
   </main>
 
   <footer>
-    &copy; 2026 Virtuosolve &middot; Todos los derechos reservados
+    <nav aria-label="Footer">
+      <a href="/" style="color:var(--muted);text-decoration:none;font-size:.78rem;margin:0 .75rem;">Inicio</a>
+      <a href="/#problema" style="color:var(--muted);text-decoration:none;font-size:.78rem;margin:0 .75rem;">El Problema</a>
+      <a href="/#solucion" style="color:var(--muted);text-decoration:none;font-size:.78rem;margin:0 .75rem;">Solución IA</a>
+      <a href="/#proceso" style="color:var(--muted);text-decoration:none;font-size:.78rem;margin:0 .75rem;">Proceso</a>
+      <a href="/#garantia" style="color:var(--muted);text-decoration:none;font-size:.78rem;margin:0 .75rem;">Garantía</a>
+    </nav>
+    <p style="margin-top:.75rem;">&copy; 2026 Virtuosolve &middot; Todos los derechos reservados</p>
   </footer>
 
 </body>
