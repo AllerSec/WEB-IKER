@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Virtuosolve | IA para Clínicas Estéticas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── VARIABLES ── */
+    :root {
+      --bg:        #080810;
+      --bg2:       #0d0d1a;
+      --bg3:       #111122;
+      --text:      #e8e8f0;
+      --muted:     #8888aa;
+      --cyan:      #22D3EE;
+      --blue:      #2563EB;
+      --blue-dark: #1D4ED8;
+      --grad:      linear-gradient(135deg, #22D3EE 0%, #2563EB 100%);
+      --grad-soft: linear-gradient(135deg, rgba(34,211,238,.15) 0%, rgba(37,99,235,.15) 100%);
+      --border:    rgba(34,211,238,.12);
+      --border-h:  rgba(34,211,238,.35);
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Space Grotesk", sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    .noise {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9999; opacity: .04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ── SVG FILTER (morph goo) ── */
+    .filters { position: absolute; width: 0; height: 0; pointer-events: none; }
+
+    /* ═══════════════════════════════════════════
+       NAVBAR
+    ═══════════════════════════════════════════ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 2.5rem;
+      background: rgba(8,8,16,.7);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transition: background .3s;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: .75rem;
+      text-decoration: none;
+    }
+    .nav-logo {
+      width: 34px; height: 34px;
+      object-fit: contain; filter: drop-shadow(0 0 8px rgba(34,211,238,.4));
+    }
+    .nav-name {
+      font-size: 1.2rem; font-weight: 700; letter-spacing: .04em;
+      background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .nav-links {
+      display: flex; gap: 2rem; list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: .9rem;
+      letter-spacing: .04em; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--cyan); }
+    .nav-cta {
+      padding: .55rem 1.4rem; border-radius: 6px;
+      background: var(--grad); color: #fff;
+      font-weight: 600; font-size: .88rem; letter-spacing: .04em;
+      text-decoration: none; cursor: pointer; border: none;
+      box-shadow: 0 0 20px rgba(37,99,235,.4);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 0 32px rgba(34,211,238,.5); }
+
+    /* ═══════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════ */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      position: relative; z-index: 1;
+      padding: 8rem 2rem 4rem;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* Ambient glow blobs */
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none;
+    }
+    .blob-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(34,211,238,.18) 0%, transparent 70%);
+      top: -150px; left: -150px; animation: float1 8s ease-in-out infinite;
+    }
+    .blob-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(37,99,235,.22) 0%, transparent 70%);
+      bottom: -100px; right: -100px; animation: float2 10s ease-in-out infinite;
+    }
+    @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,30px)} }
+    @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,-40px)} }
+
+    /* Grid lines */
+    .hero-grid {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(34,211,238,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,211,238,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .35rem 1rem; border-radius: 100px;
+      border: 1px solid var(--border-h);
+      background: rgba(34,211,238,.07);
+      font-size: .78rem; font-weight: 500; letter-spacing: .08em; color: var(--cyan);
+      margin-bottom: 2.5rem; animation: fade-up .8s ease-out .2s both;
+    }
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--cyan); box-shadow: 0 0 8px var(--cyan);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* Morph title */
+    .morph-container {
+      position: relative;
+      font-size: clamp(3.5rem, 12vw, 9rem);
+      font-weight: 700;
+      filter: url(#threshold);
+      user-select: none;
+      animation: fade-up .8s ease-out .4s both;
+    }
+    .word-rotator {
+      position: relative; height: 1.15em; width: 100%;
+      min-width: 14ch; display: flex; justify-content: center; align-items: center;
+    }
+    .word {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0; white-space: nowrap;
+      background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: rotate-words 9s infinite ease-in-out;
+    }
+    .word:nth-child(1) { animation-delay: 0s; }
+    .word:nth-child(2) { animation-delay: 3s; }
+    .word:nth-child(3) { animation-delay: 6s; }
+    @keyframes rotate-words {
+      0%   { opacity:0; filter:blur(24px); transform:translate(-50%,-50%) scale(.8); }
+      5%   { opacity:.5; filter:blur(10px); }
+      15%, 35% { opacity:1; filter:blur(0); transform:translate(-50%,-50%) scale(1); }
+      45%  { opacity:.5; filter:blur(10px); }
+      50%, 100% { opacity:0; filter:blur(24px); transform:translate(-50%,-50%) scale(1.2); }
+    }
+
+    /* Hero sub-heading */
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--muted); max-width: 700px; margin: 2rem auto 0;
+      line-height: 1.7; animation: fade-up .8s ease-out .8s both;
+    }
+    .hero-sub strong { color: var(--text); }
+
+    /* Guarantee pill */
+    .guarantee-pill {
+      margin-top: 1.8rem;
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .5rem 1.2rem; border-radius: 100px;
+      border: 1px solid rgba(34,211,238,.2);
+      background: rgba(34,211,238,.05);
+      font-size: .82rem; color: var(--cyan); font-weight: 500;
+      animation: fade-up .8s ease-out 1s both;
+    }
+
+    /* CTA buttons */
+    .hero-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      margin-top: 2.5rem; animation: fade-up .8s ease-out 1.2s both;
+    }
+    .btn-primary {
+      padding: .85rem 2rem; border-radius: 8px;
+      background: var(--grad); color: #fff; font-weight: 700;
+      font-size: 1rem; letter-spacing: .03em; text-decoration: none;
+      box-shadow: 0 0 30px rgba(37,99,235,.45);
+      transition: transform .2s, box-shadow .2s; cursor: pointer; border: none;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 45px rgba(34,211,238,.55); }
+    .btn-secondary {
+      padding: .85rem 2rem; border-radius: 8px;
+      border: 1px solid var(--border-h); background: transparent;
+      color: var(--text); font-weight: 600; font-size: 1rem;
+      text-decoration: none; transition: border-color .2s, background .2s; cursor: pointer;
+    }
+    .btn-secondary:hover { border-color: var(--cyan); background: rgba(34,211,238,.06); }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .5rem;
+      opacity: 0; animation: fade-in 1s ease-out 2s forwards;
+    }
+    .mouse {
+      width: 24px; height: 38px;
+      border: 2px solid rgba(34,211,238,.3); border-radius: 20px; position: relative;
+    }
+    .wheel {
+      width: 2px; height: 6px; background: var(--cyan);
+      position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
+      border-radius: 2px; animation: scroll-wheel 1.5s infinite;
+    }
+    @keyframes scroll-wheel {
+      0%   { transform: translateX(-50%) translateY(0); opacity: 1; }
+      100% { transform: translateX(-50%) translateY(14px); opacity: 0; }
+    }
+    .scroll-label { font-size: .7rem; color: var(--muted); letter-spacing: .12em; }
+
+    @keyframes fade-up {
+      from { opacity:0; transform: translateY(24px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    @keyframes fade-in { to { opacity:1; } }
+
+    /* ═══════════════════════════════════════════
+       STATS BAR
+    ═══════════════════════════════════════════ */
+    .stats-bar {
+      background: var(--bg2);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+    }
+    .stats-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 3rem;
+    }
+    .stat-item { text-align: center; }
+    .stat-number {
+      font-size: 2.4rem; font-weight: 700;
+      background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      line-height: 1;
+    }
+    .stat-label { font-size: .85rem; color: var(--muted); margin-top: .4rem; letter-spacing: .05em; }
+
+    /* ═══════════════════════════════════════════
+       SECTIONS COMMON
+    ═══════════════════════════════════════════ */
+    section { padding: 7rem 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block; font-size: .75rem; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--cyan);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; line-height: 1.15;
+      margin-bottom: 1.25rem;
+    }
+    .section-desc {
+      font-size: 1.05rem; color: var(--muted); max-width: 640px; line-height: 1.75;
+    }
+
+    /* ═══════════════════════════════════════════
+       PROBLEM SECTION
+    ═══════════════════════════════════════════ */
+    .problem { background: var(--bg); }
+    .problem-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+      margin-top: 4rem;
+    }
+    .problem-visual {
+      position: relative;
+    }
+    .problem-card-main {
+      background: linear-gradient(135deg, rgba(37,99,235,.12), rgba(34,211,238,.08));
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 2.5rem;
+      position: relative; overflow: hidden;
+    }
+    .problem-card-main::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(34,211,238,.06) 0%, transparent 60%);
+    }
+    .loss-number {
+      font-size: 5rem; font-weight: 700; line-height: 1;
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .loss-label { font-size: 1.1rem; color: var(--muted); margin-top: .5rem; }
+    .loss-sub { font-size: .9rem; color: var(--muted); margin-top: 1rem; line-height: 1.6; }
+
+    .pain-list { list-style: none; display: flex; flex-direction: column; gap: 1.2rem; }
+    .pain-item {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 1.2rem 1.5rem; border-radius: 12px;
+      background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05);
+      transition: border-color .2s, background .2s;
+    }
+    .pain-item:hover { border-color: var(--border-h); background: rgba(34,211,238,.04); }
+    .pain-icon {
+      font-size: 1.4rem; line-height: 1; flex-shrink: 0; margin-top: .1rem;
+    }
+    .pain-text strong { display: block; margin-bottom: .2rem; font-weight: 600; }
+    .pain-text p { font-size: .9rem; color: var(--muted); }
+
+    /* ═══════════════════════════════════════════
+       SOLUTION SECTION
+    ═══════════════════════════════════════════ */
+    .solution { background: var(--bg2); position: relative; overflow: hidden; }
+    .solution::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0;
+      height: 1px; background: var(--grad);
+    }
+    .steps-header { text-align: center; margin-bottom: 4rem; }
+    .steps-header .section-desc { margin: 0 auto; }
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;
+    }
+    .step-card {
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--border); border-radius: 16px;
+      padding: 2rem; position: relative; overflow: hidden;
+      transition: border-color .3s, transform .3s, box-shadow .3s;
+      cursor: default;
+    }
+    .step-card:hover {
+      border-color: var(--border-h);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(37,99,235,.15);
+    }
+    .step-card::before {
+      content: ""; position: absolute; inset: 0;
+      background: var(--grad-soft); opacity: 0; transition: opacity .3s;
+    }
+    .step-card:hover::before { opacity: 1; }
+    .step-number {
+      font-size: .72rem; font-weight: 700; letter-spacing: .14em;
+      color: var(--cyan); margin-bottom: 1rem;
+    }
+    .step-icon-wrap {
+      width: 52px; height: 52px; border-radius: 12px;
+      background: var(--grad); display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 1.2rem;
+      box-shadow: 0 0 20px rgba(37,99,235,.35);
+    }
+    .step-title { font-size: 1.15rem; font-weight: 700; margin-bottom: .6rem; }
+    .step-desc { font-size: .92rem; color: var(--muted); line-height: 1.65; }
+    .step-tag {
+      display: inline-block; margin-top: 1rem;
+      padding: .25rem .75rem; border-radius: 100px;
+      background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.2);
+      font-size: .73rem; color: var(--cyan); font-weight: 600; letter-spacing: .06em;
+    }
+
+    /* Speed-to-lead banner */
+    .speed-banner {
+      margin-top: 3rem;
+      background: var(--grad);
+      border-radius: 16px; padding: 2.5rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;
+      box-shadow: 0 0 60px rgba(37,99,235,.3);
+    }
+    .speed-text h3 { font-size: 1.6rem; font-weight: 700; color: #fff; }
+    .speed-text p { color: rgba(255,255,255,.8); margin-top: .3rem; font-size: .95rem; }
+    .speed-metric {
+      text-align: center;
+    }
+    .speed-metric .big { font-size: 3.5rem; font-weight: 700; color: #fff; line-height: 1; }
+    .speed-metric .small { font-size: .85rem; color: rgba(255,255,255,.75); margin-top: .2rem; }
+
+    /* ═══════════════════════════════════════════
+       HOW IT WORKS – TIMELINE
+    ═══════════════════════════════════════════ */
+    .process { background: var(--bg); }
+    .timeline { position: relative; margin-top: 4rem; }
+    .timeline::before {
+      content: ""; position: absolute; left: 28px; top: 0; bottom: 0;
+      width: 2px; background: linear-gradient(to bottom, var(--cyan), var(--blue), transparent);
+    }
+    .timeline-item {
+      display: flex; gap: 2rem; align-items: flex-start;
+      padding: 0 0 3rem 0; position: relative;
+    }
+    .timeline-dot {
+      flex-shrink: 0; width: 58px; height: 58px; border-radius: 50%;
+      background: var(--bg2); border: 2px solid var(--border-h);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; position: relative; z-index: 1;
+      box-shadow: 0 0 20px rgba(34,211,238,.2);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .timeline-item:hover .timeline-dot {
+      border-color: var(--cyan); box-shadow: 0 0 30px rgba(34,211,238,.4);
+    }
+    .timeline-content {
+      flex: 1; padding: 1.5rem 2rem; border-radius: 14px;
+      background: rgba(255,255,255,.02); border: 1px solid var(--border);
+      transition: border-color .2s;
+    }
+    .timeline-item:hover .timeline-content { border-color: var(--border-h); }
+    .timeline-content h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: .4rem; }
+    .timeline-content p { font-size: .92rem; color: var(--muted); line-height: 1.65; }
+    .timeline-time {
+      display: inline-block; margin-top: .75rem;
+      padding: .2rem .7rem; border-radius: 100px;
+      background: rgba(37,99,235,.12); border: 1px solid rgba(37,99,235,.3);
+      font-size: .72rem; color: #60a5fa; font-weight: 600;
+    }
+
+    /* ═══════════════════════════════════════════
+       GUARANTEE SECTION
+    ═══════════════════════════════════════════ */
+    .guarantee { background: var(--bg3); text-align: center; }
+    .guarantee-box {
+      max-width: 750px; margin: 0 auto;
+      padding: 3.5rem; border-radius: 24px;
+      background: linear-gradient(135deg, rgba(34,211,238,.08), rgba(37,99,235,.1));
+      border: 1px solid var(--border-h);
+      position: relative; overflow: hidden;
+      box-shadow: 0 0 80px rgba(37,99,235,.15);
+    }
+    .guarantee-box::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(34,211,238,.1), transparent);
+    }
+    .guarantee-icon { font-size: 3.5rem; margin-bottom: 1.2rem; }
+    .guarantee-box h2 {
+      font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem;
+    }
+    .guarantee-box h2 span {
+      background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .guarantee-box p { font-size: 1.05rem; color: var(--muted); max-width: 560px; margin: 0 auto; line-height: 1.75; }
+    .guarantee-tags {
+      display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; margin-top: 2rem;
+    }
+    .g-tag {
+      padding: .4rem 1rem; border-radius: 100px;
+      border: 1px solid var(--border); background: rgba(255,255,255,.03);
+      font-size: .82rem; color: var(--text); font-weight: 500;
+    }
+
+    /* ═══════════════════════════════════════════
+       CTA / CONTACT
+    ═══════════════════════════════════════════ */
+    .cta-section { background: var(--bg); padding: 7rem 2rem; }
+    .cta-inner { max-width: 680px; margin: 0 auto; text-align: center; }
+    .cta-inner h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; line-height: 1.2; margin-bottom: 1rem; }
+    .cta-inner h2 span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .cta-inner p { color: var(--muted); margin-bottom: 2.5rem; font-size: 1rem; }
+
+    .contact-form {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2.5rem;
+      display: flex; flex-direction: column; gap: 1.2rem;
+      box-shadow: 0 0 60px rgba(37,99,235,.12);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: .4rem; }
+    .form-group label { font-size: .82rem; color: var(--muted); letter-spacing: .04em; }
+    .form-group input,
+    .form-group select {
+      padding: .75rem 1rem; border-radius: 8px;
+      background: rgba(255,255,255,.04); border: 1px solid var(--border);
+      color: var(--text); font-family: inherit; font-size: .95rem;
+      transition: border-color .2s, box-shadow .2s; outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(34,211,238,.1);
+    }
+    .form-group select option { background: #111; }
+    .form-submit {
+      padding: 1rem; border-radius: 10px;
+      background: var(--grad); color: #fff; font-weight: 700;
+      font-size: 1rem; border: none; cursor: pointer;
+      box-shadow: 0 0 30px rgba(37,99,235,.4);
+      transition: transform .2s, box-shadow .2s;
+      letter-spacing: .04em;
+    }
+    .form-submit:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(34,211,238,.5); }
+    .form-note { font-size: .78rem; color: var(--muted); text-align: center; }
+
+    /* ═══════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════ */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 3rem 2rem;
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-brand { display: flex; align-items: center; gap: .7rem; }
+    .footer-logo { width: 28px; height: 28px; object-fit: contain; opacity: .9; }
+    .footer-name {
+      font-weight: 700; font-size: 1rem;
+      background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .footer-tagline { font-size: .8rem; color: var(--muted); margin-top: .1rem; }
+    .footer-links {
+      display: flex; gap: 2rem; list-style: none;
+    }
+    .footer-links a { color: var(--muted); text-decoration: none; font-size: .85rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--cyan); }
+    .footer-copy { font-size: .78rem; color: var(--muted); }
+    .footer-grad-line {
+      height: 2px; background: var(--grad); margin-top: 2rem; opacity: .3; border-radius: 1px;
+    }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .problem-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .steps-grid { grid-template-columns: 1fr; }
+      nav { padding: 1rem 1.2rem; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 640px) {
+      .form-row { grid-template-columns: 1fr; }
+      .speed-banner { flex-direction: column; text-align: center; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      .footer-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="noise"></div>
+
+  <!-- SVG filter para morph -->
+  <svg class="filters">
+    <defs>
+      <filter id="threshold">
+        <feColorMatrix in="SourceGraphic" type="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" result="goo" />
+        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- ══════════════ NAVBAR ══════════════ -->
+  <nav>
+    <a href="#" class="nav-brand">
+      <img src="descarga.png" alt="Virtuosolve Logo" class="nav-logo" />
+      <span class="nav-name">Virtuosolve</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#problema">El Problema</a></li>
+      <li><a href="#solucion">Solución IA</a></li>
+      <li><a href="#proceso">Proceso</a></li>
+      <li><a href="#garantia">Garantía</a></li>
+    </ul>
+    <a href="#contacto" class="nav-cta">Solicitar Demo →</a>
+  </nav>
+
+  <!-- ══════════════ HERO ══════════════ -->
+  <section class="hero">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="hero-grid"></div>
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      IA PARA CLÍNICAS ESTÉTICAS · SPEED TO LEAD
+    </div>
+
+    <div class="morph-container">
+      <div class="word-rotator">
+        <div class="word">CONVIERTE</div>
+        <div class="word">ATRAE</div>
+        <div class="word">CIERRA</div>
+      </div>
+    </div>
+
+    <p class="hero-sub">
+      Ayudamos a clínicas estéticas a <strong>aumentar la conversión de sus anuncios un 20%</strong>
+      mediante IA que detecta y contacta a pacientes de alto valor <strong>en segundos</strong>.
+    </p>
+
+    <div class="guarantee-pill">
+      🛡️ &nbsp;Sin resultados en 14 días → te devolvemos el dinero. Sin preguntas.
+    </div>
+
+    <div class="hero-actions">
+      <a href="#contacto" class="btn-primary">Quiero aumentar mi conversión</a>
+      <a href="#solucion" class="btn-secondary">Ver cómo funciona</a>
+    </div>
+
+    <div class="scroll-indicator">
+      <div class="mouse"><div class="wheel"></div></div>
+      <span class="scroll-label">SCROLL</span>
+    </div>
+  </section>
+
+  <!-- ══════════════ STATS BAR ══════════════ -->
+  <div class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <div class="stat-number">80%</div>
+        <div class="stat-label">de leads perdidos por falta de velocidad</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">&lt;5s</div>
+        <div class="stat-label">tiempo de respuesta con nuestra IA</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">+20%</div>
+        <div class="stat-label">incremento medio en conversión</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">14</div>
+        <div class="stat-label">días de prueba garantizada</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ PROBLEMA ══════════════ -->
+  <section class="problem" id="problema">
+    <div class="section-inner">
+      <span class="section-tag">El problema</span>
+      <h2 class="section-title">El "agujero negro"<br />de tu inversión en publicidad.</h2>
+
+      <div class="problem-grid">
+        <div>
+          <p class="section-desc" style="margin-bottom: 2rem;">
+            Hoy inviertes miles de euros en Facebook e Instagram Ads, pero los datos del sector
+            no mienten: las clínicas están perdiendo hasta el <strong style="color:var(--text)">80% de sus oportunidades de venta</strong>
+            simplemente por falta de velocidad.
+          </p>
+          <p class="section-desc">
+            Si un paciente pide presupuesto para un tratamiento de alta gama —como
+            <strong style="color:var(--text)">hilos tensores o rinomodelación</strong>— y tu equipo tarda 3 horas en contestar,
+            ese paciente ya le ha escrito a la clínica de al lado.
+            <br /><br />
+            Estás quemando dinero en publicidad para alimentar a tu competencia.
+          </p>
+        </div>
+
+        <div class="problem-visual">
+          <div class="problem-card-main">
+            <div class="loss-number">80%</div>
+            <div class="loss-label">de oportunidades de venta perdidas</div>
+            <div class="loss-sub">El paciente de alta gama que no recibe respuesta en menos de 5 minutos busca otra clínica. Así de simple. Así de brutal.</div>
+          </div>
+
+          <ul class="pain-list" style="margin-top: 1.5rem;">
+            <li class="pain-item">
+              <span class="pain-icon">⏱️</span>
+              <div class="pain-text">
+                <strong>Respuesta tardía = lead perdido</strong>
+                <p>El 78% de los pacientes elige la primera clínica que le responde. Cada hora de retraso reduce la tasa de conversión un 21%.</p>
+              </div>
+            </li>
+            <li class="pain-item">
+              <span class="pain-icon">💸</span>
+              <div class="pain-text">
+                <strong>Gastas en ads, gana la competencia</strong>
+                <p>Tu presupuesto de marketing funciona perfectamente. El problema está en los segundos posteriores al clic.</p>
+              </div>
+            </li>
+            <li class="pain-item">
+              <span class="pain-icon">🎯</span>
+              <div class="pain-text">
+                <strong>No distingues "curiosos" de pacientes premium</strong>
+                <p>Tu equipo pierde tiempo con leads de baja intención mientras los de alto valor se enfrían.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SOLUCIÓN ══════════════ -->
+  <section class="solution" id="solucion">
+    <div class="section-inner">
+      <div class="steps-header">
+        <span class="section-tag">Nuestra Solución</span>
+        <h2 class="section-title">Instalamos el Cerebro de IA<br />de Virtuosolve en tu flujo de ventas.</h2>
+        <p class="section-desc">
+          No es un simple autorrespondedor. Es un <strong style="color:var(--text)">Sistema de Triaje Inteligente</strong>
+          que analiza, filtra y actúa en milisegundos para que nunca vuelvas a perder un paciente de alto valor.
+        </p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">PASO 01</div>
+          <div class="step-icon-wrap">🧠</div>
+          <div class="step-title">Análisis de Intención Real</div>
+          <div class="step-desc">
+            Cuando un paciente rellena tu formulario, nuestra IA analiza en milisegundos qué busca,
+            qué tratamiento le interesa y qué nivel de urgencia e intención de compra tiene.
+            Sin fricción. Sin retrasos.
+          </div>
+          <span class="step-tag">⚡ &lt;100ms de análisis</span>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">PASO 02</div>
+          <div class="step-icon-wrap">🎯</div>
+          <div class="step-title">Filtro de "Curiosos"</div>
+          <div class="step-desc">
+            Separamos automáticamente a los que solo buscan información general de los pacientes
+            de <strong style="color:var(--text)">"alto valor"</strong>: aquellos interesados en tratamientos premium como
+            hilos tensores, rinomodelación o medicina estética avanzada.
+          </div>
+          <span class="step-tag">🏆 Solo leads cualificados</span>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">PASO 03</div>
+          <div class="step-icon-wrap">💬</div>
+          <div class="step-title">Respuesta Instantánea vía WhatsApp</div>
+          <div class="step-desc">
+            Si la IA detecta una intención de compra clara, envía al instante un mensaje
+            personalizado al paciente para "bloquearlo" y evitar que siga buscando en otras clínicas.
+            El paciente siente atención inmediata y exclusiva.
+          </div>
+          <span class="step-tag">💬 WhatsApp en &lt;5 segundos</span>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">PASO 04</div>
+          <div class="step-icon-wrap">🔔</div>
+          <div class="step-title">Alerta Prioritaria al Equipo</div>
+          <div class="step-desc">
+            Simultáneamente, hace sonar una alarma en el móvil de tu equipo de ventas con toda
+            la información del paciente para que realicen la llamada de cierre
+            <strong style="color:var(--text)">en menos de 5 minutos</strong>.
+          </div>
+          <span class="step-tag">📲 Alerta inmediata</span>
+        </div>
+      </div>
+
+      <div class="speed-banner">
+        <div class="speed-text">
+          <h3>Speed to Lead, impulsado por IA</h3>
+          <p>El principio que transforma tu inversión en publicidad en pacientes reales.</p>
+        </div>
+        <div class="speed-metric">
+          <div class="big">&lt;5 min</div>
+          <div class="small">De lead a conversación de cierre</div>
+        </div>
+        <div class="speed-metric">
+          <div class="big">24/7</div>
+          <div class="small">Funcionando sin parar</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ PROCESO / TIMELINE ══════════════ -->
+  <section class="process" id="proceso">
+    <div class="section-inner">
+      <span class="section-tag">Cómo empezamos</span>
+      <h2 class="section-title">Del primer contacto a<br />resultados en 48 horas.</h2>
+      <p class="section-desc">Un proceso de onboarding diseñado para que no pierdas ni un día.</p>
+
+      <div class="timeline" style="margin-top: 3.5rem; max-width: 700px;">
+        <div class="timeline-item">
+          <div class="timeline-dot">📋</div>
+          <div class="timeline-content">
+            <h4>Auditoría de tu flujo actual</h4>
+            <p>Analizamos cómo llegan tus leads, en cuánto tiempo responde tu equipo y dónde se están yendo tus pacientes de mayor valor.</p>
+            <span class="timeline-time">Día 1 · 60 minutos</span>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">⚙️</div>
+          <div class="timeline-content">
+            <h4>Configuración del Sistema de Triaje IA</h4>
+            <p>Personalizamos la IA con los tratamientos de tu clínica, el tono de comunicación y los criterios de "paciente de alto valor" para tu mercado.</p>
+            <span class="timeline-time">Día 1-2 · Configuración técnica</span>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">🚀</div>
+          <div class="timeline-content">
+            <h4>Activación y prueba en vivo</h4>
+            <p>Ponemos en marcha el sistema con tus leads reales. Tu equipo recibe las primeras alertas prioritarias y observamos los primeros resultados.</p>
+            <span class="timeline-time">Día 2-3 · Go live</span>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">📈</div>
+          <div class="timeline-content">
+            <h4>Optimización y reporte de resultados</h4>
+            <p>Durante los 14 días de prueba monitorizamos conversiones, ajustamos parámetros y te entregamos un informe con el incremento real en tu tasa de cierre.</p>
+            <span class="timeline-time">Días 3-14 · Optimización continua</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ GARANTÍA ══════════════ -->
+  <section class="guarantee" id="garantia">
+    <div class="section-inner">
+      <div class="guarantee-box">
+        <div class="guarantee-icon">🛡️</div>
+        <h2>Garantía total de <span>14 días</span></h2>
+        <p>
+          Si en los primeros 14 días Virtuosolve no mejora tu tasa de conversión de leads,
+          te devolvemos el 100% de tu inversión. Sin letra pequeña, sin preguntas,
+          sin complicaciones. Asumimos nosotros el riesgo porque estamos seguros de los resultados.
+        </p>
+        <div class="guarantee-tags">
+          <span class="g-tag">✅ 100% reembolso garantizado</span>
+          <span class="g-tag">✅ Sin permanencia</span>
+          <span class="g-tag">✅ Resultados medibles</span>
+          <span class="g-tag">✅ Sin coste de cancelación</span>
+        </div>
+        <div style="margin-top:2rem;">
+          <a href="#contacto" class="btn-primary">Empezar sin riesgo →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ CTA / CONTACTO ══════════════ -->
+  <section class="cta-section" id="contacto">
+    <div class="cta-inner">
+      <h2>¿Listo para dejar de <span>regalar pacientes</span> a tu competencia?</h2>
+      <p>Solicita una demo gratuita. En menos de 24h analizamos tu situación y te mostramos exactamente cuánto estás perdiendo y cómo lo recuperamos.</p>
+
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" placeholder="Tu nombre" required />
+          </div>
+          <div class="form-group">
+            <label>Clínica</label>
+            <input type="text" placeholder="Nombre de tu clínica" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="tu@clinica.com" required />
+          </div>
+          <div class="form-group">
+            <label>Teléfono (WhatsApp)</label>
+            <input type="tel" placeholder="+34 600 000 000" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Presupuesto mensual en publicidad</label>
+          <select>
+            <option value="">Selecciona un rango</option>
+            <option>Menos de 1.000€/mes</option>
+            <option>1.000€ – 3.000€/mes</option>
+            <option>3.000€ – 7.000€/mes</option>
+            <option>Más de 7.000€/mes</option>
+          </select>
+        </div>
+        <button type="submit" class="form-submit">Quiero mi demo gratuita →</button>
+        <p class="form-note">🔒 Tus datos están seguros. Sin spam. Solo te contactaremos para tu demo.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ══════════════ FOOTER ══════════════ -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">
+          <img src="descarga.png" alt="Virtuosolve" class="footer-logo" />
+          <span class="footer-name">Virtuosolve</span>
+        </div>
+        <div class="footer-tagline">IA de Intención para Clínicas Estéticas</div>
+      </div>
+      <ul class="footer-links">
+        <li><a href="#problema">El Problema</a></li>
+        <li><a href="#solucion">Solución</a></li>
+        <li><a href="#proceso">Proceso</a></li>
+        <li><a href="#garantia">Garantía</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+      <div class="footer-copy">© 2025 Virtuosolve · Todos los derechos reservados</div>
+    </div>
+    <div class="footer-grad-line"></div>
+  </footer>
+
+  <script>
+    // Form submit handler
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.form-submit');
+      btn.textContent = '✅ Solicitud enviada. Te contactamos en &lt;24h';
+      btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+      btn.disabled = true;
+    }
+
+    // Intersection observer for subtle reveal animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(el => {
+        if (el.isIntersecting) {
+          el.target.style.opacity = '1';
+          el.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.step-card, .pain-item, .timeline-item, .stat-item').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity .6s ease, transform .6s ease';
+      observer.observe(el);
+    });
+
+    // Stagger step cards
+    document.querySelectorAll('.step-card').forEach((el, i) => {
+      el.style.transitionDelay = `${i * 0.1}s`;
+    });
+  </script>
+</body>
+</html>
