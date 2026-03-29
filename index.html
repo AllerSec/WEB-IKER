@@ -975,13 +975,12 @@
       };
 
       try {
-        await fetch(SHEET_URL, {
-          method: 'POST',
+        const params = new URLSearchParams(payload);
+        await fetch(SHEET_URL + '?' + params.toString(), {
+          method: 'GET',
           mode:   'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify(payload),
         });
-        btn.textContent = 'Solicitud enviada — nos ponemos en contacto en menos de 24h';
+        btn.textContent = 'Solicitud enviada \u2014 nos ponemos en contacto en menos de 24h';
         btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
         form.reset();
       } catch (err) {
