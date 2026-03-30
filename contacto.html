@@ -334,7 +334,60 @@
       <a href="/#garantia" style="color:var(--muted);text-decoration:none;font-size:.78rem;margin:0 .75rem;">Garantía</a>
     </nav>
     <p style="margin-top:.75rem;">&copy; 2026 Virtuosolve &middot; Todos los derechos reservados</p>
+    <p style="margin-top:.4rem;">
+      <a href="aviso-legal.html" style="color:var(--muted);text-decoration:none;font-size:.73rem;margin:0 .4rem;">Aviso Legal</a>
+      &middot;
+      <a href="privacidad.html" style="color:var(--muted);text-decoration:none;font-size:.73rem;margin:0 .4rem;">Privacidad</a>
+      &middot;
+      <a href="cookies.html" style="color:var(--muted);text-decoration:none;font-size:.73rem;margin:0 .4rem;">Cookies</a>
+    </p>
   </footer>
 
+  <!-- BANNER DE COOKIES -->
+  <div id="cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies" style="
+    display:none; position:fixed; bottom:0; left:0; right:0; z-index:9999;
+    background:#0c0c18; border-top:1px solid rgba(255,255,255,.08);
+    padding:1rem 1.5rem; gap:1rem;
+    flex-wrap:wrap; align-items:center; justify-content:space-between;
+    font-size:.83rem; color:#7777a0;
+  ">
+    <p style="margin:0; max-width:680px; line-height:1.5;">
+      Usamos cookies técnicas necesarias para el funcionamiento del sitio. Puedes consultar nuestra
+      <a href="cookies.html" style="color:#22d3ee;">Política de Cookies</a> y
+      <a href="privacidad.html" style="color:#22d3ee;">Política de Privacidad</a>.
+    </p>
+    <div style="display:flex; gap:.6rem; flex-shrink:0;">
+      <button onclick="setCookieConsent('rejected')" style="
+        padding:.5rem 1.1rem; border-radius:8px; border:1px solid rgba(255,255,255,.12);
+        background:transparent; color:#7777a0; font-size:.83rem; cursor:pointer;
+        transition:border-color .2s;
+      " onmouseover="this.style.borderColor='rgba(255,255,255,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.12)'">
+        Solo necesarias
+      </button>
+      <button onclick="setCookieConsent('accepted')" style="
+        padding:.5rem 1.1rem; border-radius:8px; border:none;
+        background:linear-gradient(135deg,#22d3ee,#3b82f6); color:#fff;
+        font-size:.83rem; font-weight:600; cursor:pointer;
+        transition:opacity .2s;
+      " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+        Aceptar
+      </button>
+    </div>
+  </div>
+  <script>
+    (function() {
+      function getCookie(name) {
+        return document.cookie.split('; ').find(r => r.startsWith(name + '='));
+      }
+      function setCookieConsent(value) {
+        document.cookie = 'cookie_consent=' + value + '; Max-Age=31536000; path=/; SameSite=Lax';
+        document.getElementById('cookie-banner').style.display = 'none';
+      }
+      window.setCookieConsent = setCookieConsent;
+      if (!getCookie('cookie_consent')) {
+        document.getElementById('cookie-banner').style.display = 'flex';
+      }
+    })();
+  </script>
 </body>
 </html>
