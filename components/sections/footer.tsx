@@ -38,19 +38,10 @@ export function FooterSection() {
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <LambdaEmblem className="h-12 w-12" />
-            <div>
-              <div className="font-display font-semibold tracking-[0.2em] text-[18px] text-white">
-                LAMBDA
-              </div>
-              <div className="font-display tracking-[0.32em] text-[10px] text-ink-soft">
-                AUTOMATIONS
-              </div>
-            </div>
+            <span className="font-display font-semibold tracking-[0.06em] text-[20px] text-white">
+              VirtuoSolve
+            </span>
           </div>
-          <p className="text-[13px] text-ink-soft/80 mt-3 max-w-[300px]">
-            Plantilla de automatización con IA. Personalizable, lista para
-            producción y diseñada para escalar con tu equipo.
-          </p>
         </div>
 
         {sections.map((col) => (
