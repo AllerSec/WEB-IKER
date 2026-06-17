@@ -29,16 +29,16 @@ export default function HomePage() {
     <main className="relative bg-bg-deep text-white selection:bg-accent-blue/40">
       <Navbar />
       <HeroSection />
-      <LazyOnView minHeight={800}>
+      <LazyOnView id="benefits" minHeight={800}>
         <BenefitsSection />
       </LazyOnView>
-      <LazyOnView minHeight={900}>
+      <LazyOnView id="services" minHeight={900}>
         <ServicesSection />
       </LazyOnView>
-      <LazyOnView minHeight={900}>
+      <LazyOnView id="process" minHeight={900}>
         <ProcessSection />
       </LazyOnView>
-      <LazyOnView minHeight={900}>
+      <LazyOnView id="contact" minHeight={900}>
         <ContactSection />
       </LazyOnView>
       <LazyOnView minHeight={700}>
