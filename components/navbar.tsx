@@ -2,6 +2,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { MenuIcon } from "./icons";
+import { smoothScrollTo } from "./smooth-scroll";
 
 const links = [
   { href: "#benefits", label: "Beneficios" },
@@ -9,9 +10,23 @@ const links = [
   { href: "#process", label: "Proceso" },
 ];
 
+/** Click handler for any in-page anchor — slow-scrolls via Lenis instead of jumping. */
+function useAnchorClick() {
+  return React.useCallback(
+    (href: string, onAfter?: () => void) => (e: React.MouseEvent) => {
+      if (!href.startsWith("#")) return;
+      e.preventDefault();
+      smoothScrollTo(href, { duration: 2.2 });
+      onAfter?.();
+    },
+    []
+  );
+}
+
 export function Navbar() {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const anchorClick = useAnchorClick();
 
   React.useEffect(() => {
     const on = () => setScrolled(window.scrollY > 40);
@@ -31,7 +46,11 @@ export function Navbar() {
           scrolled ? "shadow-[0_18px_40px_-12px_rgba(0,0,0,0.6)]" : ""
         }`}
       >
-        <a href="#hero" className="flex items-center gap-2 pl-2">
+        <a
+          href="#hero"
+          onClick={anchorClick("#hero")}
+          className="flex items-center gap-2 pl-2"
+        >
           <Image
             src="/images/isotipo.png"
             alt="Virtuosolve"
@@ -50,6 +69,7 @@ export function Navbar() {
             <li key={l.href}>
               <a
                 href={l.href}
+                onClick={anchorClick(l.href)}
                 className="px-3 py-1.5 text-[13px] text-white/85 hover:text-white rounded-full transition-colors hover:bg-white/5"
               >
                 {l.label}
@@ -60,6 +80,7 @@ export function Navbar() {
 
         <a
           href="#contact"
+          onClick={anchorClick("#contact")}
           className="nav-blob-sm hidden md:inline-flex px-4 py-2 text-[11px] font-display font-medium tracking-[0.14em] uppercase text-white"
         >
           <span className="btn-toplight" aria-hidden />
@@ -82,15 +103,15 @@ export function Navbar() {
             <a
               key={l.href}
               href={l.href}
+              onClick={anchorClick(l.href, () => setOpen(false))}
               className="px-3 py-2 text-[14px] text-white/85 hover:text-white rounded-lg hover:bg-white/5"
-              onClick={() => setOpen(false)}
             >
               {l.label}
             </a>
           ))}
           <a
             href="#contact"
-            onClick={() => setOpen(false)}
+            onClick={anchorClick("#contact", () => setOpen(false))}
             className="btn-blue mt-2 rounded-full px-4 py-2 text-[12px] font-display font-medium tracking-[0.14em] uppercase text-white text-center"
           >
             Solicita Servicios

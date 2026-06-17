@@ -2,6 +2,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import { SectionEyebrow } from "../ui/section-eyebrow";
+import { smoothScrollTo } from "../smooth-scroll";
 import { LambdaEmblem } from "../icons";
 
 /* Stylized robotic hands holding emblem — pure SVG */
@@ -191,6 +192,10 @@ export function CTAFinalSection() {
 
         <a
           href="#contact"
+          onClick={(e) => {
+            e.preventDefault();
+            smoothScrollTo("#contact", { duration: 2.2 });
+          }}
           className="btn-blue mt-8 inline-flex items-center justify-center rounded-full px-7 py-3.5 font-display font-medium tracking-[0.14em] uppercase text-[13px] text-white"
         >
           Automatiza Ahora

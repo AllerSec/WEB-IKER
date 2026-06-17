@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { VerifiedIcon } from "../icons";
 import { WaveDecoration } from "../ui/wave-decoration";
 import { GLSLHills } from "../ui/glsl-hills";
+import { smoothScrollTo } from "../smooth-scroll";
 
 export function HeroSection() {
   return (
@@ -90,6 +91,10 @@ export function HeroSection() {
           {/* CTA */}
           <a
             href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              smoothScrollTo("#contact", { duration: 2.4 });
+            }}
             className="btn-blob inline-flex items-center justify-center px-10 py-5 font-display font-semibold tracking-[0.14em] uppercase text-[15px] text-white mt-4"
           >
             <span className="btn-toplight" aria-hidden />

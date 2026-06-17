@@ -3,6 +3,7 @@ import * as React from "react";
 import { motion, useInView, useMotionValue, useTransform, animate } from "framer-motion";
 import { SectionEyebrow } from "../ui/section-eyebrow";
 import { ChatIcon } from "../icons";
+import { smoothScrollTo } from "../smooth-scroll";
 
 /* ─────────────────────────────  Live gauge  ──────────────────────────── */
 function DialGlyph({ active = false }: { active?: boolean }) {
@@ -478,6 +479,10 @@ export function ServicesSection() {
         <div className="mt-12 flex justify-center">
           <a
             href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              smoothScrollTo("#contact", { duration: 2.2 });
+            }}
             className="btn-blue inline-flex items-center justify-center rounded-full px-7 py-3.5 font-display font-medium tracking-[0.12em] uppercase text-[13px] text-white"
           >
             Reserva una Demo
