@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { LambdaEmblem } from "../icons";
+import Image from "next/image";
 
 const sections = [
   {
@@ -37,7 +37,13 @@ export function FooterSection() {
       <div className="mx-auto max-w-[1180px] px-6 grid grid-cols-1 md:grid-cols-[1.6fr_repeat(3,1fr)] gap-10">
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <LambdaEmblem className="h-12 w-12" />
+            <Image
+              src="/images/isotipo.png"
+              alt="VirtuoSolve"
+              width={44}
+              height={44}
+              className="h-11 w-11 object-contain"
+            />
             <span className="font-display font-semibold tracking-[0.06em] text-[20px] text-white">
               VirtuoSolve
             </span>
