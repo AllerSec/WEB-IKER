@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { motion } from "framer-motion";
-import { StackedLabel } from "../ui/stacked-label";
+import { SectionEyebrow } from "../ui/section-eyebrow";
 import { LambdaEmblem } from "../icons";
 
 /* Stylized robotic hands holding emblem — pure SVG */
@@ -162,7 +162,7 @@ export function CTAFinalSection() {
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[900px] radial-glow blur-3xl opacity-60 pointer-events-none" />
 
       <div className="relative mx-auto max-w-[1100px] px-6 flex flex-col items-center text-center">
-        <StackedLabel text="Empieza Ahora" />
+        <SectionEyebrow>Empieza Ahora</SectionEyebrow>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
