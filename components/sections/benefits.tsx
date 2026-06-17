@@ -293,17 +293,17 @@ function ChatGlyph({ active }: { active: boolean }) {
             {[0, 1, 2].map((i) => (
               <motion.span
                 key={i}
-                className="h-1.5 w-1.5 rounded-full"
+                className="h-1.5 w-1.5 rounded-full transition-colors duration-300"
+                style={{ backgroundColor: p.mid }}
                 animate={{
-                  y: [0, active ? -5 : -3, 0],
+                  y: [0, -3, 0],
                   opacity: [0.35, 1, 0.35],
-                  backgroundColor: p.mid,
                   scale: [1, 1.2, 1],
                 }}
                 transition={{
-                  duration: active ? 0.45 : 1,
+                  duration: 1,
                   repeat: Infinity,
-                  delay: i * (active ? 0.08 : 0.18),
+                  delay: i * 0.18,
                   ease: "easeInOut",
                 }}
               />

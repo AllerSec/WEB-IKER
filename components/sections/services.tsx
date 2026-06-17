@@ -17,28 +17,51 @@ function DialGlyph({ active = false }: { active?: boolean }) {
   const dashOffset = useTransform(pct, (p) => ARC * (1 - p / 100));
   const needleAngle = useTransform(pct, (p) => -90 + (p / 100) * 180);
 
+  // tracks whether the first-ever rest intro has already started (so we don't
+  // replay it when the user unhovers — instead we smoothly settle from the
+  // current value back into the 40↔80 oscillation)
+  const introStartedRef = React.useRef(false);
+
   React.useEffect(() => {
     if (!inView) return;
 
     if (active) {
-      // hover → climb to 100 and hold
+      // hover → climb from current value to 100 and hold
       const c = animate(pct, 100, { duration: 0.8, ease: [0.22, 1, 0.36, 1] });
       return () => c.stop();
     }
 
-    // rest → intro (0 → 80 → 40), then gentle 40↔80 oscillation forever
-    let loop: ReturnType<typeof animate> | undefined;
-    const intro = animate(pct, [0, 80, 40], { duration: 3, ease: "easeInOut" });
-    intro.then(() => {
-      loop = animate(pct, [40, 80, 40], {
+    // rest path. Two flavours:
+    //   - first time:  0 → 80 → 40   then loop
+    //   - back from hover (or any subsequent entry): current → 40 then loop
+    // Both ALWAYS animate from the current motion value, never snap to 0.
+    let cancelled = false;
+    let current: ReturnType<typeof animate> | undefined;
+
+    const run = async () => {
+      if (!introStartedRef.current) {
+        introStartedRef.current = true;
+        current = animate(pct, 80, { duration: 1.4, ease: "easeInOut" });
+        await current;
+        if (cancelled) return;
+        current = animate(pct, 40, { duration: 1.4, ease: "easeInOut" });
+        await current;
+      } else {
+        current = animate(pct, 40, { duration: 0.8, ease: [0.22, 1, 0.36, 1] });
+        await current;
+      }
+      if (cancelled) return;
+      current = animate(pct, [40, 80, 40], {
         duration: 5,
         ease: "easeInOut",
         repeat: Infinity,
       });
-    });
+    };
+    run();
+
     return () => {
-      intro.stop();
-      loop?.stop();
+      cancelled = true;
+      current?.stop();
     };
   }, [inView, active, pct]);
 
@@ -75,16 +98,6 @@ function DialGlyph({ active = false }: { active?: boolean }) {
           strokeDasharray={ARC}
           style={{ strokeDashoffset: dashOffset }}
         />
-
-        {/* needle following the same value */}
-        <motion.g style={{ rotate: needleAngle, transformOrigin: "110px 130px" }}>
-          <line x1="110" y1="130" x2="110" y2="62" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
-          <circle cx="110" cy="62" r="9" fill="url(#dial-glow)" />
-          <circle cx="110" cy="62" r="4" fill="#fff" />
-        </motion.g>
-
-        {/* hub */}
-        <circle cx="110" cy="130" r="5" fill="#1A82E8" stroke="#fff" strokeWidth="1.5" />
 
         {/* ticks — gently pulsing */}
         {Array.from({ length: 9 }).map((_, i) => {
@@ -177,15 +190,16 @@ function AgentGlyph() {
       <motion.div
         animate={{ y: [0, -4, 0] }}
         transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-        className="relative z-10 glass-pill rounded-2xl rounded-bl-sm p-3 flex items-start gap-2 w-[210px]"
+        className="relative z-10 glass-pill rounded-2xl rounded-bl-sm p-3 flex items-center gap-2 max-w-[92%]"
       >
         <motion.div
           animate={{ rotate: [0, 12, -8, 0], scale: [1, 1.12, 1] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          className="shrink-0"
         >
-          <ChatIcon className="h-4 w-4 text-accent-blue mt-0.5" />
+          <ChatIcon className="h-4 w-4 text-accent-blue" />
         </motion.div>
-        <span className="text-[12px] leading-snug text-white/90 min-h-[32px]">
+        <span className="text-[12px] leading-snug text-white/90 whitespace-nowrap">
           {shown}
           <motion.span
             className="inline-block w-[1.5px] h-3 -mb-[2px] ml-[1px] bg-accent-blue"
@@ -195,7 +209,7 @@ function AgentGlyph() {
         </span>
       </motion.div>
 
-      {/* live sound-wave bars under the bubble */}
+      {/* live sound-wave bars under the bubble — slower, more ambient */}
       <div className="absolute bottom-3 flex items-end gap-[3px] h-6">
         {Array.from({ length: 9 }).map((_, i) => (
           <motion.span
@@ -203,9 +217,9 @@ function AgentGlyph() {
             className="w-[3px] rounded-full bg-accent-blue/70"
             animate={{ height: [4, 18, 8, 22, 4] }}
             transition={{
-              duration: 1.1 + (i % 4) * 0.15,
+              duration: 2.8 + (i % 4) * 0.35,
               repeat: Infinity,
-              delay: i * 0.07,
+              delay: i * 0.18,
               ease: "easeInOut",
             }}
           />
