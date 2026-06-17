@@ -72,8 +72,7 @@ export function FooterSection() {
       </div>
 
       <div className="mx-auto max-w-[1180px] px-6 mt-12 flex flex-col md:flex-row items-center justify-between gap-3 text-[12px] text-ink-soft/70 border-t border-white/5 pt-6">
-        <span>© {new Date().getFullYear()} Lambda Template · Plantilla demostrativa.</span>
-        <span>Diseñada como template — personalízala con tu marca.</span>
+        <span>© {new Date().getFullYear()} VirtuoSolve. Todos los derechos reservados.</span>
       </div>
     </footer>
   );
