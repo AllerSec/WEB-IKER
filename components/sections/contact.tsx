@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { motion } from "framer-motion";
-import { StackedLabel } from "../ui/stacked-label";
+import { SectionEyebrow } from "../ui/section-eyebrow";
 import {
   InstagramIcon,
   LinkedinIcon,
@@ -50,7 +50,7 @@ export function ContactSection() {
       </svg>
 
       <div className="relative mx-auto max-w-[760px] px-6 flex flex-col items-center">
-        <StackedLabel text="Solicita Nuestros Servicios" />
+        <SectionEyebrow>Solicita Nuestros Servicios</SectionEyebrow>
 
         <motion.h2
           initial={{ opacity: 0, y: 22 }}
