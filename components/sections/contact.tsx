@@ -10,6 +10,12 @@ import {
   TiktokIcon,
 } from "../icons";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Pega aquí la URL de tu Google Apps Script desplegado como Web App
+// (la que termina en /exec — ver docs/apps-script-sheet.gs).
+const SCRIPT_URL = "[PEGA_AQUÍ_TU_URL_DEL_APPS_SCRIPT]";
+// ─────────────────────────────────────────────────────────────────────────────
+
 const socials = [
   { Icon: InstagramIcon, href: "#", name: "Instagram" },
   { Icon: LinkedinIcon, href: "#", name: "LinkedIn" },
@@ -18,7 +24,60 @@ const socials = [
   { Icon: TiktokIcon, href: "#", name: "TikTok" },
 ];
 
+type Status = "idle" | "sending" | "sent" | "error";
+
 export function ContactSection() {
+  const [status, setStatus] = React.useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = React.useState<string>("");
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (status === "sending") return;
+
+    if (SCRIPT_URL.startsWith("[")) {
+      setStatus("error");
+      setErrorMsg(
+        "Falta configurar SCRIPT_URL en contact.tsx — pega ahí la URL del Google Apps Script."
+      );
+      return;
+    }
+
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    const payload = {
+      nombre: String(fd.get("nombre") || ""),
+      empresa: String(fd.get("empresa") || ""),
+      email: String(fd.get("email") || ""),
+      presupuesto: String(fd.get("presupuesto") || ""),
+      descripcion: String(fd.get("descripcion") || ""),
+      origen:
+        typeof window !== "undefined"
+          ? window.location.href
+          : "virtuosolve",
+    };
+
+    setStatus("sending");
+    setErrorMsg("");
+    try {
+      // text/plain evita el preflight CORS — Apps Script lo acepta y lo
+      // parseamos como JSON en doPost.
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+        redirect: "follow",
+      });
+      setStatus("sent");
+      form.reset();
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(
+        err instanceof Error ? err.message : "Error al enviar la solicitud."
+      );
+    }
+  };
+
   return (
     <section id="contact" className="relative py-24 md:py-32 overflow-hidden">
       {/* Background world-curve decoration */}
@@ -94,22 +153,30 @@ export function ContactSection() {
 
         {/* Form card */}
         <motion.form
+          ref={formRef}
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.65 }}
           className="mt-10 card-blob is-flat no-dots no-halo w-full p-6 md:p-8 flex flex-col gap-5"
           style={{ "--blob-delay": "-2s" } as React.CSSProperties}
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={handleSubmit}
         >
-          <Field label="Nombre" placeholder="Tu nombre" />
-          <Field label="Empresa" placeholder="Nombre de tu empresa o proyecto" />
+          <Field name="nombre" label="Nombre" placeholder="Tu nombre" required />
           <Field
+            name="empresa"
+            label="Empresa"
+            placeholder="Nombre de tu empresa o proyecto"
+          />
+          <Field
+            name="email"
             label="Email"
             type="email"
             placeholder="Tu correo electrónico de contacto"
+            required
           />
           <SelectField
+            name="presupuesto"
             label="Presupuesto"
             placeholder="Elige tu rango de inversión..."
             options={[
@@ -121,6 +188,7 @@ export function ContactSection() {
             ]}
           />
           <TextareaField
+            name="descripcion"
             label="Cuéntame más sobre tu idea"
             placeholder="Comparte algunos detalles sobre lo que necesitas. Cuanto más sepamos, mejor podremos ayudarte."
           />
@@ -149,16 +217,44 @@ export function ContactSection() {
 
           <button
             type="submit"
-            className="btn-blob mt-2 inline-flex items-center justify-center px-10 py-5 font-display font-semibold tracking-[0.14em] uppercase text-[15px] text-white"
+            disabled={status === "sending" || status === "sent"}
+            className="btn-blob mt-2 inline-flex items-center justify-center px-10 py-5 font-display font-semibold tracking-[0.14em] uppercase text-[15px] text-white disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <span className="btn-toplight" aria-hidden />
             <span className="btn-sheen" aria-hidden />
-            <span>Envía Solicitud</span>
+            <span>
+              {status === "sending"
+                ? "Enviando…"
+                : status === "sent"
+                  ? "¡Recibida!"
+                  : "Envía Solicitud"}
+            </span>
           </button>
 
-          <p className="text-center text-[11px] text-ink-soft/70">
-            Respuesta en menos de 24h
-          </p>
+          {/* Status messages */}
+          {status === "sent" && (
+            <motion.p
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center text-[13px] text-emerald-300/90"
+            >
+              ✓ Tu solicitud está en cola. Te respondemos en menos de 24h.
+            </motion.p>
+          )}
+          {status === "error" && (
+            <motion.p
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center text-[13px] text-rose-300/90"
+            >
+              ✗ {errorMsg || "Ha fallado el envío. Inténtalo de nuevo en unos segundos."}
+            </motion.p>
+          )}
+          {status === "idle" && (
+            <p className="text-center text-[11px] text-ink-soft/70">
+              Respuesta en menos de 24h
+            </p>
+          )}
         </motion.form>
       </div>
     </section>
@@ -166,20 +262,26 @@ export function ContactSection() {
 }
 
 function Field({
+  name,
   label,
   type = "text",
   placeholder,
+  required,
 }: {
+  name: string;
   label: string;
   type?: string;
   placeholder?: string;
+  required?: boolean;
 }) {
   return (
     <label className="flex flex-col gap-2">
       <span className="text-[12px] uppercase tracking-[0.18em] text-ink-eyebrow">{label}</span>
       <input
+        name={name}
         type={type}
         placeholder={placeholder}
+        required={required}
         className="h-11 rounded-lg border border-white/10 bg-bg-deep/70 px-3.5 text-[14px] text-white placeholder:text-white/30 outline-none focus:border-accent-blue/60 focus:ring-2 focus:ring-accent-blue/25 transition"
       />
     </label>
@@ -187,10 +289,12 @@ function Field({
 }
 
 function SelectField({
+  name,
   label,
   options,
   placeholder = "Selecciona una opción",
 }: {
+  name: string;
   label: string;
   options: string[];
   placeholder?: string;
@@ -199,6 +303,7 @@ function SelectField({
     <label className="flex flex-col gap-2">
       <span className="text-[12px] uppercase tracking-[0.18em] text-ink-eyebrow">{label}</span>
       <select
+        name={name}
         defaultValue=""
         className="h-11 rounded-lg border border-white/10 bg-bg-deep/70 px-3 text-[14px] text-white outline-none focus:border-accent-blue/60 focus:ring-2 focus:ring-accent-blue/25 transition"
       >
@@ -216,9 +321,11 @@ function SelectField({
 }
 
 function TextareaField({
+  name,
   label,
   placeholder,
 }: {
+  name: string;
   label: string;
   placeholder?: string;
 }) {
@@ -226,6 +333,7 @@ function TextareaField({
     <label className="flex flex-col gap-2">
       <span className="text-[12px] uppercase tracking-[0.18em] text-ink-eyebrow">{label}</span>
       <textarea
+        name={name}
         rows={4}
         placeholder={placeholder}
         className="rounded-lg border border-white/10 bg-bg-deep/70 p-3 text-[14px] text-white placeholder:text-white/30 outline-none focus:border-accent-blue/60 focus:ring-2 focus:ring-accent-blue/25 transition resize-none"
