@@ -149,9 +149,11 @@ export function ContactSection() {
 
           <button
             type="submit"
-            className="btn-blue mt-2 rounded-full px-6 py-3.5 font-display font-medium tracking-[0.14em] uppercase text-[13px] text-white"
+            className="btn-blob mt-2 inline-flex items-center justify-center px-10 py-5 font-display font-semibold tracking-[0.14em] uppercase text-[15px] text-white"
           >
-            Enviar Solicitud
+            <span className="btn-toplight" aria-hidden />
+            <span className="btn-sheen" aria-hidden />
+            <span>Envía Solicitud</span>
           </button>
 
           <p className="text-center text-[11px] text-ink-soft/70">
