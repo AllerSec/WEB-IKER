@@ -1,119 +1,183 @@
 "use client";
 import * as React from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { SectionEyebrow } from "../ui/section-eyebrow";
 import { smoothScrollTo } from "../smooth-scroll";
-import { LambdaEmblem } from "../icons";
 
-/* Stylized robotic hands holding emblem — pure SVG */
-function HandsArt() {
+/* ─────────  Orbital core: isotipo + rotating rings + travelling orbs  ────── */
+function OrbitalCore() {
+  const C = 180; // viewBox centre
+  const SIZE = 360;
+
   return (
-    <div className="relative">
-      <svg
-        viewBox="0 0 520 340"
-        className="relative h-[340px] w-[520px] max-w-full"
-        aria-hidden
-      >
+    <div
+      className="relative"
+      style={{ width: SIZE, height: SIZE, maxWidth: "100%" }}
+      aria-hidden
+    >
+      {/* Ground reflection under the core */}
+      <div className="absolute left-1/2 bottom-3 -translate-x-1/2 h-7 w-56 rounded-full blur-2xl bg-accent-blue/55" />
+
+      {/* Three concentric orbits with travelling orbs */}
+      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="absolute inset-0 w-full h-full">
         <defs>
-          <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#E9F2FF" />
-            <stop offset="55%" stopColor="#8AA7C7" />
-            <stop offset="100%" stopColor="#2E4865" />
-          </linearGradient>
-          <linearGradient id="metal-dark" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#1B2E48" />
-            <stop offset="100%" stopColor="#070D1A" />
-          </linearGradient>
-          <linearGradient id="palm" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#C8D6E8" />
-            <stop offset="100%" stopColor="#445E80" />
-          </linearGradient>
-          <radialGradient id="bell" cx="50%" cy="40%" r="60%">
-            <stop offset="0%" stopColor="rgba(80,170,255,0.55)" />
+          <radialGradient id="orb-bright">
+            <stop offset="0%" stopColor="#FFFFFF" />
+            <stop offset="40%" stopColor="#9CD8FF" />
             <stop offset="100%" stopColor="rgba(48,166,255,0)" />
+          </radialGradient>
+          <radialGradient id="orb-soft">
+            <stop offset="0%" stopColor="#C8E8FF" />
+            <stop offset="100%" stopColor="rgba(120,200,255,0)" />
           </radialGradient>
         </defs>
 
-        {/* Glow under */}
-        <ellipse cx="260" cy="300" rx="170" ry="22" fill="rgba(48,166,255,0.45)" filter="blur(12px)" />
-
-        {/* Left forearm */}
-        <path
-          d="M30,260 L130,170 L220,170 L220,260 Z"
-          fill="url(#metal)"
-          opacity="0.95"
-        />
-        <path
-          d="M50,260 L130,180 L210,180 L210,260 Z"
-          fill="url(#metal-dark)"
-          opacity="0.6"
-        />
-        {/* Right forearm */}
-        <path
-          d="M490,260 L390,170 L300,170 L300,260 Z"
-          fill="url(#metal)"
-          opacity="0.95"
-        />
-        <path
-          d="M470,260 L390,180 L310,180 L310,260 Z"
-          fill="url(#metal-dark)"
-          opacity="0.6"
-        />
-
-        {/* Left palm */}
-        <path
-          d="M110,180 C100,110 220,90 245,150 C255,180 240,210 220,220 C190,235 130,225 110,180 Z"
-          fill="url(#palm)"
-        />
-        {/* Right palm */}
-        <path
-          d="M410,180 C420,110 300,90 275,150 C265,180 280,210 300,220 C330,235 390,225 410,180 Z"
-          fill="url(#palm)"
-        />
-
-        {/* Fingers - left */}
-        {[0, 1, 2, 3].map((i) => (
-          <rect
-            key={`fl${i}`}
-            x={150 + i * 22}
-            y={70}
-            width="14"
-            height="80"
-            rx="6"
-            fill="url(#metal)"
-            opacity="0.95"
+        {/* Outer ring — large, slow, dashed */}
+        <motion.g
+          animate={{ rotate: 360 }}
+          transition={{ duration: 34, ease: "linear", repeat: Infinity }}
+          style={{ transformOrigin: `${C}px ${C}px` }}
+        >
+          <circle
+            cx={C}
+            cy={C}
+            r="160"
+            fill="none"
+            stroke="rgba(120,200,255,0.22)"
+            strokeWidth="1"
+            strokeDasharray="3 9"
           />
-        ))}
-        {/* Fingers - right */}
-        {[0, 1, 2, 3].map((i) => (
-          <rect
-            key={`fr${i}`}
-            x={284 + i * 22}
-            y={70}
-            width="14"
-            height="80"
-            rx="6"
-            fill="url(#metal)"
-            opacity="0.95"
-          />
-        ))}
-        {/* Thumb L */}
-        <rect x="225" y="135" width="14" height="55" rx="6" fill="url(#metal)" transform="rotate(35 232 162)" />
-        {/* Thumb R */}
-        <rect x="280" y="135" width="14" height="55" rx="6" fill="url(#metal)" transform="rotate(-35 287 162)" />
+          <circle cx={C} cy={C - 160} r="10" fill="url(#orb-soft)" />
+          <circle cx={C} cy={C - 160} r="3" fill="#fff" />
+        </motion.g>
 
-        {/* Light blob between palms */}
-        <circle cx="260" cy="155" r="86" fill="url(#bell)" />
+        {/* Mid ring — counter-rotating, segmented */}
+        <motion.g
+          animate={{ rotate: -360 }}
+          transition={{ duration: 20, ease: "linear", repeat: Infinity }}
+          style={{ transformOrigin: `${C}px ${C}px` }}
+        >
+          <circle
+            cx={C}
+            cy={C}
+            r="118"
+            fill="none"
+            stroke="rgba(150,210,255,0.4)"
+            strokeWidth="1.1"
+            strokeDasharray="120 60 40 80 60"
+          />
+          <circle cx={C} cy={C - 118} r="12" fill="url(#orb-bright)" />
+          <circle cx={C} cy={C - 118} r="3.5" fill="#fff" />
+        </motion.g>
+
+        {/* Inner ring — fast, solid, with a tiny travelling orb */}
+        <motion.g
+          animate={{ rotate: 360 }}
+          transition={{ duration: 10, ease: "linear", repeat: Infinity }}
+          style={{ transformOrigin: `${C}px ${C}px` }}
+        >
+          <circle
+            cx={C}
+            cy={C}
+            r="80"
+            fill="none"
+            stroke="rgba(180,225,255,0.55)"
+            strokeWidth="1.2"
+          />
+          <circle cx={C} cy={C - 80} r="9" fill="url(#orb-bright)" />
+          <circle cx={C} cy={C - 80} r="2.5" fill="#fff" />
+        </motion.g>
+
+        {/* Subtle radial beams streaming out from centre */}
+        {Array.from({ length: 12 }).map((_, i) => {
+          const angle = (i / 12) * Math.PI * 2;
+          const x1 = C + Math.cos(angle) * 48;
+          const y1 = C + Math.sin(angle) * 48;
+          const x2 = C + Math.cos(angle) * 70;
+          const y2 = C + Math.sin(angle) * 70;
+          return (
+            <motion.line
+              key={i}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              stroke="rgba(180,220,255,0.7)"
+              strokeWidth="1"
+              strokeLinecap="round"
+              animate={{ opacity: [0.2, 0.8, 0.2] }}
+              transition={{
+                duration: 2.4,
+                delay: i * 0.12,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          );
+        })}
       </svg>
-      {/* Lambda emblem floating between palms */}
-      <div className="absolute left-1/2 top-[28%] -translate-x-1/2">
-        <LambdaEmblem className="h-20 w-20 drop-shadow-[0_0_20px_rgba(80,170,255,0.7)]" />
-      </div>
+
+      {/* Drifting sparkle particles in the gaps between orbits */}
+      {Array.from({ length: 14 }).map((_, i) => {
+        const angle = (i / 14) * Math.PI * 2;
+        const r = 138 + (i % 3) * 8;
+        const x = C + Math.cos(angle) * r;
+        const y = C + Math.sin(angle) * r;
+        return (
+          <motion.span
+            key={i}
+            className="absolute block h-[3px] w-[3px] rounded-full bg-white"
+            style={{ left: x - 1.5, top: y - 1.5 }}
+            animate={{ opacity: [0, 1, 0], scale: [0.6, 1.4, 0.6] }}
+            transition={{
+              duration: 3 + (i % 4),
+              repeat: Infinity,
+              delay: i * 0.25,
+              ease: "easeInOut",
+            }}
+          />
+        );
+      })}
+
+      {/* Central pulsing halo behind the isotype */}
+      <motion.div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-40 w-40 rounded-full bg-accent-blue/40 blur-3xl"
+        animate={{ scale: [1, 1.18, 1], opacity: [0.5, 0.85, 0.5] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Tight ring framing the isotipo (separate spin, slow) */}
+      <motion.div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[120px] w-[120px] rounded-full border border-white/25"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 24, ease: "linear", repeat: Infinity }}
+      >
+        <div className="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)]" />
+        <div className="absolute top-1/2 -right-1 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-white/70" />
+      </motion.div>
+
+      {/* The isotipo: subtle floating + breathing + heavy blue glow */}
+      <motion.div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        animate={{ y: [0, -6, 0], scale: [1, 1.04, 1] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <div className="relative h-[88px] w-[88px] drop-shadow-[0_0_28px_rgba(80,170,255,0.9)]">
+          <Image
+            src="/images/isotipo.png"
+            alt="VirtuoSolve"
+            fill
+            className="object-contain"
+            sizes="88px"
+          />
+        </div>
+      </motion.div>
     </div>
   );
 }
 
-/* Circuit background */
+/* Circuit background (kept — feels right behind the orbital core) */
 function CircuitBg() {
   return (
     <svg
@@ -166,13 +230,13 @@ export function CTAFinalSection() {
         <SectionEyebrow>Empieza Ahora</SectionEyebrow>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-120px" }}
-          transition={{ duration: 0.8 }}
-          className="mt-8 animate-float-y"
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-8"
         >
-          <HandsArt />
+          <OrbitalCore />
         </motion.div>
 
         <motion.h2
