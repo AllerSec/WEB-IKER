@@ -13,7 +13,7 @@ import {
 // ─────────────────────────────────────────────────────────────────────────────
 // Pega aquí la URL de tu Google Apps Script desplegado como Web App
 // (la que termina en /exec — ver docs/apps-script-sheet.gs).
-const SCRIPT_URL = "[PEGA_AQUÍ_TU_URL_DEL_APPS_SCRIPT]";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGx3hO60VukmT-bIYrryBO7i67azgKlsaZr-2gSOcrC9lTE37T7rpHbSautwfrD5M3/exec";
 // ─────────────────────────────────────────────────────────────────────────────
 
 const socials = [
