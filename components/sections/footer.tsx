@@ -24,9 +24,9 @@ const sections = [
   {
     title: "Legal",
     items: [
-      { label: "Términos", href: "#" },
-      { label: "Privacidad", href: "#" },
-      { label: "Contacto", href: "#contact" },
+      { label: "Aviso Legal", href: "/aviso-legal" },
+      { label: "Política de Privacidad", href: "/privacidad" },
+      { label: "Política de Cookies", href: "/cookies" },
     ],
   },
 ];

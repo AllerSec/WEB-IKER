@@ -601,3 +601,47 @@
   -webkit-text-fill-color: transparent;
   animation: shimmer 6s linear infinite;
 }
+
+/* Typography scoped to legal pages (aviso-legal, privacidad, cookies). */
+.prose-legal h2 {
+  font-family: var(--font-host), system-ui, sans-serif;
+  font-weight: 500;
+  color: #fff;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+.prose-legal p { margin: 0 0 1.1rem; }
+.prose-legal ul {
+  margin: 0 0 1.4rem 1.25rem;
+  list-style: disc;
+}
+.prose-legal ul li { margin-bottom: 0.45rem; }
+.prose-legal a {
+  color: #4FB4FF;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.prose-legal a:hover { color: #9CD8FF; }
+.prose-legal strong { color: #DCEAFF; font-weight: 600; }
+.prose-legal em { font-style: italic; color: #B7DEFF; }
+.prose-legal table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0 1.5rem;
+  font-size: 14px;
+}
+.prose-legal th, .prose-legal td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid rgba(120, 180, 255, 0.12);
+}
+.prose-legal th {
+  background: rgba(8, 22, 44, 0.55);
+  color: #DCEAFF;
+  font-weight: 600;
+  font-size: 13px;
+}

@@ -125,6 +125,28 @@ export function ContactSection() {
             placeholder="Comparte algunos detalles sobre lo que necesitas. Cuanto más sepamos, mejor podremos ayudarte."
           />
 
+          {/* RGPD consent — required to enable submission */}
+          <label className="flex items-start gap-3 mt-2 text-[12px] leading-[1.55] text-ink-soft/85 cursor-pointer">
+            <input
+              type="checkbox"
+              required
+              name="privacy-consent"
+              className="mt-[3px] h-4 w-4 shrink-0 rounded border border-white/20 bg-bg-deep/70 accent-accent-blue"
+            />
+            <span>
+              He leído y acepto la{" "}
+              <a
+                href="/privacidad"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent-blue hover:underline"
+              >
+                Política de Privacidad
+              </a>{" "}
+              y el tratamiento de mis datos para responder a esta consulta.
+            </span>
+          </label>
+
           <button
             type="submit"
             className="btn-blue mt-2 rounded-full px-6 py-3.5 font-display font-medium tracking-[0.14em] uppercase text-[13px] text-white"
@@ -133,7 +155,7 @@ export function ContactSection() {
           </button>
 
           <p className="text-center text-[11px] text-ink-soft/70">
-            Powered by Lambda · Respuesta en 24h
+            Respuesta en menos de 24h
           </p>
         </motion.form>
       </div>

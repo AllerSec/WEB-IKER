@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Manrope, Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { CookieBanner } from "@/components/legal/cookie-banner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -55,6 +56,7 @@ export default function RootLayout({
       <body className="antialiased">
         <SmoothScroll />
         {children}
+        <CookieBanner />
       </body>
     </html>
   );
