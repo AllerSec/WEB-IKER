@@ -196,9 +196,11 @@ export function CTAFinalSection() {
             e.preventDefault();
             smoothScrollTo("#contact", { duration: 2.2 });
           }}
-          className="btn-blue mt-8 inline-flex items-center justify-center rounded-full px-7 py-3.5 font-display font-medium tracking-[0.14em] uppercase text-[13px] text-white"
+          className="btn-blob mt-8 inline-flex items-center justify-center px-10 py-5 font-display font-semibold tracking-[0.14em] uppercase text-[15px] text-white"
         >
-          Automatiza Ahora
+          <span className="btn-toplight" aria-hidden />
+          <span className="btn-sheen" aria-hidden />
+          <span>Automatiza Ahora</span>
         </a>
       </div>
     </section>

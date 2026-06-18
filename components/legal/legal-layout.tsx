@@ -3,7 +3,6 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { SectionEyebrow } from "@/components/ui/section-eyebrow";
 
 /* ─────────  Drifting particles for the page background  ─────────── */
 function LegalAtmosphere() {
@@ -118,7 +117,6 @@ export function LegalLayout({
       <article className="relative z-10 mx-auto max-w-[780px] px-6 pt-32 md:pt-40 pb-24">
         {/* Header block matching home-section style */}
         <div className="flex flex-col items-center text-center gap-5">
-          <SectionEyebrow>Información legal</SectionEyebrow>
           <motion.h1
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
