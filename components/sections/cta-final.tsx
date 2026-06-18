@@ -140,39 +140,43 @@ function OrbitalCore() {
         );
       })}
 
-      {/* Central pulsing halo behind the isotype */}
-      <motion.div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-40 w-40 rounded-full bg-accent-blue/40 blur-3xl"
-        animate={{ scale: [1, 1.18, 1], opacity: [0.5, 0.85, 0.5] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      />
+      {/* Centered layer: halo + ring + isotipo. The flex parent does the
+          centering so framer-motion's transform (scale / y / rotate) doesn't
+          override Tailwind's -translate-x/-y centering classes. */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {/* Pulsing halo behind */}
+        <motion.div
+          className="absolute h-40 w-40 rounded-full bg-accent-blue/40 blur-3xl"
+          animate={{ scale: [1, 1.18, 1], opacity: [0.5, 0.85, 0.5] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
 
-      {/* Tight ring framing the isotipo (separate spin, slow) */}
-      <motion.div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[120px] w-[120px] rounded-full border border-white/25"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 24, ease: "linear", repeat: Infinity }}
-      >
-        <div className="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)]" />
-        <div className="absolute top-1/2 -right-1 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-white/70" />
-      </motion.div>
+        {/* Tight ring framing the isotipo (own slow spin) */}
+        <motion.div
+          className="absolute h-[120px] w-[120px] rounded-full border border-white/25"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 24, ease: "linear", repeat: Infinity }}
+        >
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)]" />
+          <div className="absolute top-1/2 -right-1 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-white/70" />
+        </motion.div>
 
-      {/* The isotipo: subtle floating + breathing + heavy blue glow */}
-      <motion.div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        animate={{ y: [0, -6, 0], scale: [1, 1.04, 1] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <div className="relative h-[88px] w-[88px] drop-shadow-[0_0_28px_rgba(80,170,255,0.9)]">
-          <Image
-            src="/images/isotipo.png"
-            alt="VirtuoSolve"
-            fill
-            className="object-contain"
-            sizes="88px"
-          />
-        </div>
-      </motion.div>
+        {/* The isotipo: subtle floating + breathing + heavy blue glow */}
+        <motion.div
+          animate={{ y: [0, -6, 0], scale: [1, 1.04, 1] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <div className="relative h-[88px] w-[88px] drop-shadow-[0_0_28px_rgba(80,170,255,0.9)]">
+            <Image
+              src="/images/isotipo.png"
+              alt="VirtuoSolve"
+              fill
+              className="object-contain"
+              sizes="88px"
+            />
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
