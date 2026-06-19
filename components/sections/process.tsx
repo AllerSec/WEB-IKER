@@ -104,7 +104,7 @@ export function ProcessSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-80px" }}
                   transition={{ duration: 0.6, delay: i * 0.1 }}
-                  className="card-blob p-6 pt-12 transition-[transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  className={`card-blob p-6 pt-12 transition-[transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${lit ? "" : "is-dim"}`}
                   style={{
                     "--blob-delay": `${i * -2}s`,
                     transform: lit ? "translateY(-4px)" : "translateY(0)",

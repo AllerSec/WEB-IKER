@@ -715,3 +715,25 @@
   .orbital-beams { display: none !important; }
   .orbital-particle { display: none !important; }
 }
+
+/* card-blob "dimmed" modifier — used by Process cards while not in the
+   current phase. Replaces the rotating conic-gradient border with a
+   muted flat blue stroke, and silences the surrounding box-shadow halo
+   so the card visually recedes alongside its dimmed contents. */
+.card-blob.is-dim {
+  background-image:
+    linear-gradient(180deg, rgb(0, 10, 21) 0%, rgb(0, 10, 21) 60%, rgb(6, 24, 50) 80%, rgb(11, 44, 88) 100%),
+    linear-gradient(rgba(120, 180, 255, 0.08), rgba(120, 180, 255, 0.08));
+  animation: none;
+  box-shadow: 0 0 0 1px rgba(170, 215, 255, 0.08);
+  transition:
+    background-image 0.6s ease,
+    box-shadow 0.6s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card-blob {
+  transition:
+    background-image 0.6s ease,
+    box-shadow 0.6s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
