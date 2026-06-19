@@ -194,14 +194,14 @@
       conic-gradient(
         from var(--gradient-angle, 0deg),
         rgba(15, 40, 80, 0.6)  0%,
-        #2B95FF                18%,
-        #9CDBFF                20%,
-        #2B95FF                22%,
+        #2B95FF                17%,
+        #FFFFFF                20%,
+        #2B95FF                23%,
         rgba(15, 40, 80, 0.6)  40%,
         rgba(15, 40, 80, 0.6)  60%,
-        #2B95FF                68%,
-        #9CDBFF                70%,
-        #2B95FF                72%,
+        #2B95FF                67%,
+        #FFFFFF                70%,
+        #2B95FF                73%,
         rgba(15, 40, 80, 0.6) 100%
       );
     background-clip: padding-box, border-box;
@@ -280,14 +280,14 @@
       conic-gradient(
         from var(--gradient-angle, 0deg),
         rgba(15, 40, 80, 0.6)  0%,
-        #2B95FF                18%,
-        #9CDBFF                20%,
-        #2B95FF                22%,
+        #2B95FF                17%,
+        #FFFFFF                20%,
+        #2B95FF                23%,
         rgba(15, 40, 80, 0.6)  40%,
         rgba(15, 40, 80, 0.6)  60%,
-        #2B95FF                68%,
-        #9CDBFF                70%,
-        #2B95FF                72%,
+        #2B95FF                67%,
+        #FFFFFF                70%,
+        #2B95FF                73%,
         rgba(15, 40, 80, 0.6) 100%
       );
   }
