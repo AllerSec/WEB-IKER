@@ -2,27 +2,12 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import { SectionEyebrow } from "../ui/section-eyebrow";
-import {
-  InstagramIcon,
-  LinkedinIcon,
-  YoutubeIcon,
-  TwitterIcon,
-  TiktokIcon,
-} from "../icons";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Pega aquí la URL de tu Google Apps Script desplegado como Web App
 // (la que termina en /exec — ver docs/apps-script-sheet.gs).
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGx3hO60VukmT-bIYrryBO7i67azgKlsaZr-2gSOcrC9lTE37T7rpHbSautwfrD5M3/exec";
 // ─────────────────────────────────────────────────────────────────────────────
-
-const socials = [
-  { Icon: InstagramIcon, href: "#", name: "Instagram" },
-  { Icon: LinkedinIcon, href: "#", name: "LinkedIn" },
-  { Icon: YoutubeIcon, href: "#", name: "YouTube" },
-  { Icon: TwitterIcon, href: "#", name: "X" },
-  { Icon: TiktokIcon, href: "#", name: "TikTok" },
-];
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -125,31 +110,6 @@ export function ContactSection() {
           Cuéntanos en qué te podemos ayudar. Te respondemos en menos de 24h
           con un plan de automatización adaptado a tu equipo.
         </p>
-
-        {/* Social row */}
-        <div className="mt-8 flex items-center gap-4">
-          {socials.map(({ Icon, href, name }, i) => (
-            <motion.a
-              key={name}
-              href={href}
-              aria-label={name}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.4 }}
-              whileHover={{ y: -3, scale: 1.1 }}
-              className="relative h-9 w-9 rounded-full glass-pill grid place-items-center text-ink-soft hover:text-white transition-colors"
-            >
-              <Icon className="h-4 w-4" />
-              <motion.span
-                className="absolute inset-0 rounded-full border border-accent-blue/40"
-                initial={{ scale: 1, opacity: 0 }}
-                whileHover={{ scale: 1.6, opacity: [0.6, 0] }}
-                transition={{ duration: 0.8 }}
-              />
-            </motion.a>
-          ))}
-        </div>
 
         {/* Form card */}
         <motion.form
