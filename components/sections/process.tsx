@@ -26,6 +26,14 @@ const steps = [
 ];
 
 export function ProcessSection() {
+  // 3-phase highlight cycle: phase 0 → only step 1 lit · phase 1 → steps
+  // 1 + 2 lit · phase 2 → all three. Loops continuously every ~2.4 s.
+  const [phase, setPhase] = React.useState(0);
+  React.useEffect(() => {
+    const id = setInterval(() => setPhase((p) => (p + 1) % 3), 2400);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <section id="process" className="relative py-24 md:py-32">
       <div className="mx-auto max-w-[1180px] px-6">
@@ -87,35 +95,65 @@ export function ProcessSection() {
           <div className="absolute left-[12%] right-[12%] top-[44px] h-px bg-gradient-to-r from-transparent via-accent-blue/40 to-transparent" />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {steps.map((s, i) => (
-              <motion.div
-                key={s.num}
-                initial={{ opacity: 0, y: 26 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                className="card-blob p-6 pt-12"
-                style={{ "--blob-delay": `${i * -2}s` } as React.CSSProperties}
-              >
-                {/* number circle anchored above the card */}
-                <div className="absolute -top-7 left-1/2 -translate-x-1/2 h-14 w-14 rounded-full glass-pill grid place-items-center z-10">
-                  <motion.span
-                    className="absolute inset-0 rounded-full border border-accent-blue/45"
-                    animate={{ scale: [1, 1.5], opacity: [0.6, 0] }}
-                    transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.4 }}
+            {steps.map((s, i) => {
+              const lit = i <= phase; // true while this step is part of the current phase
+              return (
+                <motion.div
+                  key={s.num}
+                  initial={{ opacity: 0, y: 26 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                  className="card-blob p-6 pt-12 transition-[transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  style={{
+                    "--blob-delay": `${i * -2}s`,
+                    transform: lit ? "translateY(-4px)" : "translateY(0)",
+                  } as React.CSSProperties}
+                >
+                  {/* Dim overlay — drops the whole card when it's not in the
+                      current phase. The inner content stays at full colour. */}
+                  <div
+                    className="pointer-events-none absolute inset-0 rounded-[18px] bg-bg-deep/55 transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                    style={{ opacity: lit ? 0 : 1 }}
+                    aria-hidden
                   />
-                  <motion.span
-                    className="font-display text-[14px] tracking-widest text-accent-blue"
-                    animate={{ opacity: [0.85, 1, 0.85] }}
-                    transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.25 }}
+
+                  {/* number circle anchored above the card */}
+                  <div className="absolute -top-7 left-1/2 -translate-x-1/2 h-14 w-14 rounded-full glass-pill grid place-items-center z-10 transition-all duration-700">
+                    {/* Ping ring — only on the active leading step */}
+                    {lit && i === phase && (
+                      <motion.span
+                        className="absolute inset-0 rounded-full border border-accent-blue/60"
+                        initial={{ scale: 1, opacity: 0.7 }}
+                        animate={{ scale: 1.6, opacity: 0 }}
+                        transition={{ duration: 1.6, repeat: Infinity }}
+                      />
+                    )}
+                    <span
+                      className="font-display text-[14px] tracking-widest transition-colors duration-500"
+                      style={{
+                        color: lit ? "#9CD8FF" : "rgba(156, 216, 255, 0.35)",
+                      }}
+                    >
+                      {s.num}
+                    </span>
+                  </div>
+
+                  <h3
+                    className="font-display font-medium text-[20px] text-center transition-colors duration-500"
+                    style={{ color: lit ? "#FFFFFF" : "rgba(255, 255, 255, 0.45)" }}
                   >
-                    {s.num}
-                  </motion.span>
-                </div>
-                <h3 className="font-display font-medium text-[20px] text-white text-center">{s.title}</h3>
-                <p className="mt-2 text-[14px] leading-[1.6] text-ink-soft text-center">{s.body}</p>
-              </motion.div>
-            ))}
+                    {s.title}
+                  </h3>
+                  <p
+                    className="mt-2 text-[14px] leading-[1.6] text-center transition-colors duration-500"
+                    style={{ color: lit ? "rgb(183, 222, 255)" : "rgba(183, 222, 255, 0.4)" }}
+                  >
+                    {s.body}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>
