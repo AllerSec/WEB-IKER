@@ -305,6 +305,7 @@ function DashboardGlyph() {
               transition={{
                 duration: 4 + (i % 3) * 0.6,
                 repeat: Infinity,
+                repeatType: "mirror",
                 ease: "easeInOut",
                 delay: i * 0.18,
               }}
