@@ -113,7 +113,7 @@ export function ProcessSection() {
                   {/* Dim overlay — drops the whole card when it's not in the
                       current phase. The inner content stays at full colour. */}
                   <div
-                    className="pointer-events-none absolute inset-0 rounded-[18px] bg-bg-deep/55 transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                    className="pointer-events-none absolute inset-0 rounded-[18px] bg-bg-deep/80 transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
                     style={{ opacity: lit ? 0 : 1 }}
                     aria-hidden
                   />
@@ -132,7 +132,7 @@ export function ProcessSection() {
                     <span
                       className="font-display text-[14px] tracking-widest transition-colors duration-500"
                       style={{
-                        color: lit ? "#9CD8FF" : "rgba(156, 216, 255, 0.35)",
+                        color: lit ? "#9CD8FF" : "rgba(156, 216, 255, 0.12)",
                       }}
                     >
                       {s.num}
@@ -141,13 +141,13 @@ export function ProcessSection() {
 
                   <h3
                     className="font-display font-medium text-[20px] text-center transition-colors duration-500"
-                    style={{ color: lit ? "#FFFFFF" : "rgba(255, 255, 255, 0.45)" }}
+                    style={{ color: lit ? "#FFFFFF" : "rgba(255, 255, 255, 0.15)" }}
                   >
                     {s.title}
                   </h3>
                   <p
                     className="mt-2 text-[14px] leading-[1.6] text-center transition-colors duration-500"
-                    style={{ color: lit ? "rgb(183, 222, 255)" : "rgba(183, 222, 255, 0.4)" }}
+                    style={{ color: lit ? "rgb(183, 222, 255)" : "rgba(183, 222, 255, 0.12)" }}
                   >
                     {s.body}
                   </p>
