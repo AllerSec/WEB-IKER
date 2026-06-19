@@ -10,7 +10,7 @@ export function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative isolate overflow-hidden flex items-end justify-center pb-[30vh] md:pb-[32vh] min-h-screen"
+      className="relative isolate overflow-hidden flex items-center md:items-end justify-center pb-[10vh] md:pb-[32vh] min-h-screen"
     >
       {/* GLSL hills (Three.js + Perlin-noise displaced plane) */}
       <GLSLHills

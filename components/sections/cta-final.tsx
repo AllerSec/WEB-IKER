@@ -90,6 +90,7 @@ function OrbitalCore() {
         </motion.g>
 
         {/* Subtle radial beams streaming out from centre */}
+        <g className="orbital-beams">
         {Array.from({ length: 12 }).map((_, i) => {
           const angle = (i / 12) * Math.PI * 2;
           const x1 = C + Math.cos(angle) * 48;
@@ -116,6 +117,7 @@ function OrbitalCore() {
             />
           );
         })}
+        </g>
       </svg>
 
       {/* Drifting sparkle particles in the gaps between orbits */}
@@ -127,7 +129,7 @@ function OrbitalCore() {
         return (
           <motion.span
             key={i}
-            className="absolute block h-[3px] w-[3px] rounded-full bg-white"
+            className="orbital-particle absolute block h-[3px] w-[3px] rounded-full bg-white"
             style={{ left: x - 1.5, top: y - 1.5 }}
             animate={{ opacity: [0, 1, 0], scale: [0.6, 1.4, 0.6] }}
             transition={{

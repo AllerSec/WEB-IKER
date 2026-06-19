@@ -685,3 +685,33 @@
   letter-spacing: 0.08em;
 }
 .prose-legal td:first-child { color: #DDEAFF; }
+
+/* ─────────────────────────────  Mobile performance  ─────────────────────────
+   Touch-class GPUs choke on the combo of conic-gradient rotation + halo blur
+   + backdrop-filter + many simultaneous framer-motion loops. Below 768 px we
+   pause the most expensive effects so card/animation frames don't drop. */
+@media (max-width: 767px) {
+  /* Stop the conic-gradient border from rotating — single biggest cost.
+     The static rotated angle still looks fine; only the animation is paused. */
+  .card-blob { animation: none !important; }
+
+  /* Halo around each card is a large blurred conic-gradient → drop entirely. */
+  .card-blob::before { display: none !important; }
+
+  /* Backdrop-filter is the second biggest cost. Soften aggressively. */
+  .glass-pill,
+  .glass-card { backdrop-filter: blur(4px) !important; -webkit-backdrop-filter: blur(4px) !important; }
+  .nav-blob::before,
+  .nav-blob-sm::before { backdrop-filter: blur(8px) !important; -webkit-backdrop-filter: blur(8px) !important; }
+
+  /* Nav blob trace can stay, the perimeter trace is cheap — but the bigger
+     blob radius is heavy due to its blur. Halve it. */
+  .nav-blob::after { filter: blur(3px) !important; }
+}
+
+@media (max-width: 767px) {
+  /* OrbitalCore in the CTA-Final: drop the radial beams and the gap-particles.
+     Keeps the 3 orbits + isotipo + halo (the visual identity stays intact). */
+  .orbital-beams { display: none !important; }
+  .orbital-particle { display: none !important; }
+}
