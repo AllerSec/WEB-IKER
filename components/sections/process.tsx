@@ -92,7 +92,61 @@ export function ProcessSection() {
 
         {/* Connector line + 3 steps */}
         <div className="relative mt-10">
-          <div className="absolute left-[12%] right-[12%] top-[44px] h-px bg-gradient-to-r from-transparent via-accent-blue/40 to-transparent" />
+          {/* Two horizontal connectors between consecutive card centres.
+              Each is a dim base track with a bright gradient overlay that
+              scaleX-fills from left when its segment becomes active. */}
+          <div
+            className="hidden md:block absolute left-0 right-0 top-[44px] h-px pointer-events-none z-0"
+            aria-hidden
+          >
+            {/* Connector 01 → 02 */}
+            <div className="absolute h-px top-0 left-[16.67%] w-[33.33%] bg-white/10" />
+            <motion.div
+              className="absolute h-[2px] top-[-0.5px] left-[16.67%] w-[33.33%] origin-left bg-gradient-to-r from-accent-blue via-white to-accent-blue"
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{
+                scaleX: phase >= 1 ? 1 : 0,
+                opacity: phase >= 1 ? 1 : 0,
+                boxShadow:
+                  phase >= 1
+                    ? "0 0 10px rgba(80,170,255,0.85)"
+                    : "0 0 0 rgba(80,170,255,0)",
+              }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            />
+            {/* Travelling pulse along connector 01 → 02 (only while it's lit) */}
+            {phase >= 1 && (
+              <motion.span
+                className="absolute h-2 w-2 -top-[3.5px] rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,0.95)]"
+                animate={{ left: ["16.67%", "50%"] }}
+                transition={{ duration: 1.4, ease: "easeOut" }}
+              />
+            )}
+
+            {/* Connector 02 → 03 */}
+            <div className="absolute h-px top-0 left-[50%] w-[33.33%] bg-white/10" />
+            <motion.div
+              className="absolute h-[2px] top-[-0.5px] left-[50%] w-[33.33%] origin-left bg-gradient-to-r from-accent-blue via-white to-accent-blue"
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{
+                scaleX: phase >= 2 ? 1 : 0,
+                opacity: phase >= 2 ? 1 : 0,
+                boxShadow:
+                  phase >= 2
+                    ? "0 0 10px rgba(80,170,255,0.85)"
+                    : "0 0 0 rgba(80,170,255,0)",
+              }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            />
+            {/* Travelling pulse along connector 02 → 03 */}
+            {phase >= 2 && (
+              <motion.span
+                className="absolute h-2 w-2 -top-[3.5px] rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,0.95)]"
+                animate={{ left: ["50%", "83.33%"] }}
+                transition={{ duration: 1.4, ease: "easeOut" }}
+              />
+            )}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {steps.map((s, i) => {
